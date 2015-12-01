@@ -11,22 +11,8 @@ mapzen.whosonfirst.yesnofix = (function(){
 
 				var pretty = document.createElement("div");
 				pretty.setAttribute("id", "props-pretty");
-			
+
 				buckets = self.bucket_props(props);
-
-				// these two go first
-
-				wof_bucket = self.render_bucket('wof', buckets['wof'])
-				pretty.appendChild(wof_bucket);
-				delete buckets['wof']
-
-				if (buckets['name']){
-					name_bucket = self.render_bucket('name', buckets['name']);
-					pretty.appendChild(name_bucket);
-					delete buckets['name'];
-				}
-
-				// now render the rest of them
 
 				var namespaces = Object.keys(buckets);
 				namespaces = namespaces.sort();
@@ -286,7 +272,7 @@ mapzen.whosonfirst.yesnofix = (function(){
 				var body = self.render_text(text, ctx);
 				anchor.appendChild(body);
 				return anchor;
-			}
+			},
 
 			'render_code': function(text, ctx){
 
@@ -296,10 +282,10 @@ mapzen.whosonfirst.yesnofix = (function(){
 				return code;
 			},
 
-				'bucket_props': function(props){
+			'bucket_props': function(props){
 
 				buckets = {};
-
+				
 				for (k in props){
 					parts = k.split(":", 2);
 
@@ -321,8 +307,8 @@ mapzen.whosonfirst.yesnofix = (function(){
 				return buckets;
 			},
 
-				'sort_bucket': function(bucket){
-
+			'sort_bucket': function(bucket){
+					
 				var sorted = {};
 
 				var keys = Object.keys(bucket);
@@ -338,7 +324,7 @@ mapzen.whosonfirst.yesnofix = (function(){
 				return sorted;
 			},
 
-				'render_bucket': function(ns, bucket){
+			'render_bucket': function(ns, bucket){
 
 				var wrapper = document.createElement("div");
 
@@ -346,17 +332,17 @@ mapzen.whosonfirst.yesnofix = (function(){
 				var content = document.createTextNode(ns);
 				header.appendChild(content);
 			
-				var sorted = sort_bucket(bucket);
-				var body = render(sorted, ns);
+				var sorted = self.sort_bucket(bucket);
+				var body = self.render(sorted, ns);
 				
 				wrapper.appendChild(header);
 				wrapper.appendChild(body);
 
 				return wrapper;
-				},
+			},
 
-			}
-
+		}
+	
 		return self;
 
 })();
