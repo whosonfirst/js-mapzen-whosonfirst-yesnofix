@@ -37,6 +37,8 @@ This library is still in active development. It may change. It may not work. It 
     </script>
 ```
 
+_See the way we're calling a method called `makeitso` ? Yeah, so stuff like that. Stuff like that will change._
+
 ## See also
 
 * http://buildinginspector.nypl.org/about
