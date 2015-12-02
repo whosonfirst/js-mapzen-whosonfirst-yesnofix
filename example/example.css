@@ -5,6 +5,8 @@ body {
 #yesnofix {
 	  width:50%;
 	  border: solid thin;
+	  padding:1em;
+	  padding-top:0;
 }
 
 #props-pretty {
