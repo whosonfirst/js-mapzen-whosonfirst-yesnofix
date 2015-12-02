@@ -57,6 +57,8 @@ Which means we might change `fix` to `maybe`. These sorts of questions and decis
 
 Assertions will be recorded in locally in the active browser context and made available via a handy `report` method (which has not been written yet). This method will return line-separated text and it will be left to individual users of this library to decide what to do with the information that's been collected.
 
+This approach was pioneered by the New York Public Library and the work they did with [their Building Inspector project](http://buildinginspector.nypl.org/about).
+
 ## See also
 
-* http://buildinginspector.nypl.org/about
+* http://buildinginspector.nypl.org/
