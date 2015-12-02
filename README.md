@@ -37,7 +37,7 @@ This library is still in active development. It may change. It may not work. It 
     </script>
 ```
 
-_See the way we're calling a method called `makeitso` ? Yeah, so stuff like that. Stuff like that will change._
+_See the way we're calling a method named `makeitso` ? Yeah, so stuff like that... stuff like that will change._
 
 ### Uh okay... now what?
 
