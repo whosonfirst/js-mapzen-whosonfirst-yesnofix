@@ -2,11 +2,10 @@
 <html>
   <head>
     <title>yes/no/fix</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <script type="text/javascript" src="../src/mapzen.whosonfirst.php.js"></script>
     <script type="text/javascript" src="../src/mapzen.whosonfirst.yesnofix.js"></script>
-
     <link rel="stylesheet" type="text/css" href="example.css" />
-
    </head>
   <body>
     <div id="yesnofix"></div>
@@ -26,7 +25,9 @@
 
       var target = "yesnofix";
 
-      mapzen.whosonfirst.yesnofix.makeitso(data, target);
+      if (! mapzen.whosonfirst.yesnofix.makeitso(data, target)){
+      	alert("failed to render data");
+      }
 
     </script>
 
