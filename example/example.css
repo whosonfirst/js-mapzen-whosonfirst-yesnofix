@@ -57,3 +57,12 @@ body {
 		 font-weight:700;
 		 font-size:1.3em;
 }
+
+#report {
+	margin-left:3em;
+}
+
+#report pre {
+	font-size: small;
+	font-family: monospace;
+}

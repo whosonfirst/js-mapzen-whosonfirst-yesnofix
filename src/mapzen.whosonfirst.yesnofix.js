@@ -1,11 +1,29 @@
 var mapzen = mapzen || {};
 mapzen.whosonfirst = mapzen.whosonfirst || {};
 
+/*
+
+To do:
+
+- tab/keyboard controls
+- flags/callback functions to render certains values as something other than text (a link, as code, etc.)
+
+Open questions:
+
+- to sort or not 
+- to bucket (by prefix) or not
+- update existing assertions or alert or just allow multiple (conflicting?) assertions for the same path
+
+ */
+
+
 mapzen.whosonfirst.yesnofix = (function(){
 
 		var fix = -1;
 		var no = 0;
 		var yes = 1;
+
+		var assertions = [];
 
 		var self = {
 
@@ -229,9 +247,106 @@ mapzen.whosonfirst.yesnofix = (function(){
 				var enc_id = mapzen.whosonfirst.php.htmlspecialchars(id);
 				var enc_value = mapzen.whosonfirst.php.htmlspecialchars(value);
 
-				alert("you clicked " + enc_id + " whose value is \"" + enc_value + "\"");
+				//alert("you clicked " + enc_id + " whose value is \"" + enc_value + "\"");
+
+				var parent = target.parentElement;
+
+				if (! parent){
+					// PLEASE TO MAKE ERRORS...
+					return;
+				}
+
+				var input = self.render_input(id);
+				parent.appendChild(input);
 			},
 
+			'render_input': function(id){
+				
+				var input = document.createElement("div");
+				input.setAttribute("id", "assert-" + id);
+
+				var yes = document.createElement("button");
+				yes.setAttribute("data-id", id);
+				yes.setAttribute("data-assertion", 1);
+
+				var no = document.createElement("button");
+				no.setAttribute("data-id", id);
+				no.setAttribute("data-assertion", 0);
+
+				var fix = document.createElement("button");
+				fix.setAttribute("data-id", id);
+				fix.setAttribute("data-assertion", 0);
+
+				yes.appendChild(document.createTextNode("yes"));
+				no.appendChild(document.createTextNode("no"));
+				fix.appendChild(document.createTextNode("fix"));
+
+				yes.onclick = mapzen.whosonfirst.yesnofix.onassert;
+				no.onclick = mapzen.whosonfirst.yesnofix.onassert;
+				fix.onclick = mapzen.whosonfirst.yesnofix.onassert;
+
+				input.appendChild(yes);
+				input.appendChild(no);
+				input.appendChild(fix);
+				
+				return input;
+			},
+
+			'onassert' : function(e){
+
+				var target = e.target;
+				var id = target.getAttribute("data-id");
+
+				if (! id){
+					return false;
+				}
+
+				var el = document.getElementById(id);
+
+				if (! el){
+					return false;
+				}
+
+				var path = id;
+				var value = target.textContent;
+				var assertion = target.getAttribute("data-assertion");
+
+				self.assert(path, value, assertion);
+
+				alert("Okay, thanks!");
+
+				var input = document.getElementById("assert-" + id);
+
+				var parent = input.parentElement;
+				parent.removeChild(input);
+			},
+			
+			// note the lack of validation... we're assuming that kind of sanity
+			// checking is happening above?
+
+			'assert': function(path, value, assertion){
+				var dt = new Date();
+				assertions.push({'path': path, 'value': value, 'assertion': assertion, 'date': dt});
+			},
+
+			'report': function(){
+
+				var report = [];
+				var count = assertions.length;
+
+				for (var i=0; i < count; i++){
+
+					var a = assertions[i];
+
+					var row = [ a['path'], a['value'], a['assertion'], a['date'].toISOString() ];
+					row = row.join(",");
+
+					report.push(row);
+				}
+
+				report = report.join("\n");
+				return report;
+			},
 		}
 	
 		return self;

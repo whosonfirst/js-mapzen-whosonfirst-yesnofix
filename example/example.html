@@ -8,7 +8,12 @@
     <link rel="stylesheet" type="text/css" href="example.css" />
    </head>
   <body>
-    <div id="yesnofix"></div>
+
+    <div id="yesnofix" style="float:left;"></div>
+    <div id="report">
+      <pre id="report-body"></pre>
+      <button id="generate-report">Generate report</button>
+    </div>
 
     <script type="text/javascript">
 
@@ -29,6 +34,22 @@
       if (! mapzen.whosonfirst.yesnofix.makeitso(data, target)){
       	alert("failed to render data");
       }
+
+      var generate_report = function(){
+
+      	var b = document.getElementById("report-body");
+      	var r = mapzen.whosonfirst.yesnofix.report();
+
+        if (r == ""){
+           alert("There is nothing to report yet!");
+           return false;
+        }
+
+      	b.innerHTML = mapzen.whosonfirst.php.htmlspecialchars(r);
+      };
+
+      var b = document.getElementById("generate-report");
+      b.onclick = generate_report;
 
     </script>
 
