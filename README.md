@@ -51,6 +51,10 @@ The second thing that will happen is that each value at the _end_ of each path i
 
 ![](yesnofix-click.png)
 
+The alert dialog is just a placeholder. The eventual goal is to present a friendly and intuitive dialog that allows a person to assert an opinion about a statement (a path and its value). The assertions are simple and spare by design. They are: `yes` this is correct, `no` this is incorrect and `fix` as in maybe. Which means we might change `fix` to `maybe`. These sorts of questions and decisions are the work.
+
+Assertions will be recorded in locally in the active browser context and made available via a handy `report` method (which has not been written yet). This method will return line-separated text and it will be left to individual users of this library to decide what to do with the information that's been collected.
+
 ## See also
 
 * http://buildinginspector.nypl.org/about
