@@ -14,13 +14,15 @@
     <script type="text/javascript">
 
       var data = {"query": {"filtered": {"filter": {"and": [{"term": {"category": "performance"}},
-                                           {"term": {"region_id": 85688543}}]},
-                        "query": {"query_string": {"query": "gowanus"}}}},
- "sort": [{"wof:megacity": {"mode": "max", "order": "desc"}},
-          {"gn:population": {"mode": "max", "order": "desc"}},
-          {"wof:name": {"order": "desc"}},
-          {"wof:scale": {"mode": "max", "order": "desc"}},
-          {"geom:area": {"mode": "max", "order": "desc"}}]};
+      {"term": {"region_id": 85688543}}]},
+      "query": {"query_string": {"query": "gowanus"}}}},
+      "sort": [{"wof:megacity": {"mode": "max", "order": "desc"}},
+      {"gn:population": {"mode": "max", "order": "desc"}},
+      {"wof:name": {"order": "desc"}},
+      {"wof:scale": {"mode": "max", "order": "desc"}},
+      {"geom:area": {"mode": "max", "order": "desc"}}],
+      "misc": ["wub", "wub", "wub" ],
+      "extra": [[1,2,3], {"hello": "world"}]};
 
       var target = "yesnofix";
 

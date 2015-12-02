@@ -3,6 +3,10 @@ mapzen.whosonfirst = mapzen.whosonfirst || {};
 
 mapzen.whosonfirst.yesnofix = (function(){
 
+		var fix = -1;
+		var no = 0;
+		var yes = 1;
+
 		var self = {
 
 			// please do not call these 'engage' or 'makeitso' ...
@@ -127,7 +131,7 @@ mapzen.whosonfirst.yesnofix = (function(){
 				for (var i=0; i < count; i++){
 					
 					var item = document.createElement("li");
-					var body = self.render(d[i], ctx);
+					var body = self.render(d[i], ctx + "#" + i);
 
 					item.appendChild(body);
 					list.appendChild(item);
