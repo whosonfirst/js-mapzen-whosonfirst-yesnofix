@@ -4,12 +4,28 @@
     <title>yes/no/fix</title>
     <script type="text/javascript" src="../src/mapzen.whosonfirst.php.js"></script>
     <script type="text/javascript" src="../src/mapzen.whosonfirst.yesnofix.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="example.css" />
+
    </head>
   <body>
     <div id="yesnofix"></div>
 
     <script type="text/javascript">
-      mapzen.whosonfirst.yesnofix.engage({'ex:foo': 'bar', 'wub': 'wubwub'});
+
+      var data = {"query": {"filtered": {"filter": {"and": [{"term": {"category": "performance"}},
+                                           {"term": {"region_id": 85688543}}]},
+                        "query": {"query_string": {"query": "gowanus"}}}},
+ "sort": [{"wof:megacity": {"mode": "max", "order": "desc"}},
+          {"gn:population": {"mode": "max", "order": "desc"}},
+          {"wof:name": {"order": "desc"}},
+          {"wof:scale": {"mode": "max", "order": "desc"}},
+          {"geom:area": {"mode": "max", "order": "desc"}}]};
+
+      var target = "yesnofix";
+
+      mapzen.whosonfirst.yesnofix.makeitso(data, target);
+
     </script>
 
   </body>

@@ -5,7 +5,21 @@ mapzen.whosonfirst.yesnofix = (function(){
 
 		var self = {
 
-			// please do not call this 'engage'...
+			// please do not call these 'engage' or 'makeitso' ...
+
+			'makeitso': function(data, target){
+
+				var el = document.getElementById(target);
+
+				if (! el){
+					return false;
+				}
+
+				var pretty = self.engage(data);
+				el.appendChild(pretty);
+				
+				return true;
+			},
 
 			'engage': function(props){
 
@@ -24,140 +38,47 @@ mapzen.whosonfirst.yesnofix = (function(){
 					var dom = self.render_bucket(ns, buckets[ns]);
 					pretty.appendChild(dom);
 				}
-				
+
 				return pretty;				
+			},
+
+			'render_bucket': function(ns, bucket){
+
+				var wrapper = document.createElement("div");
+
+				var header = document.createElement("h3");
+				var content = document.createTextNode(ns);
+				header.appendChild(content);
+			
+				var sorted = self.sort_bucket(bucket);
+				var body = self.render(sorted, ns);
+
+				wrapper.appendChild(header);
+				wrapper.appendChild(body);
+
+				return wrapper;
 			},
 
 			'render': function(d, ctx){
 				
 				// console.log("render context is " + ctx);
-				
+				// console.log(d);
+
 				if (Array.isArray(d)){
+					// console.log("render list for " + ctx);
 					return self.render_list(d, ctx);
 				}
 				
 				else if (typeof(d) == "object"){
+					// console.log("render dict for " + ctx);
 					return self.render_dict(d, ctx);
 				}
 				
 				else {
-					
-					var possible_wof = [
-							    'wof-belongsto',
-							    'wof-parent_id', 'wof-children',
-							    'wof-breaches',
-							    'wof-supersedes',
-							    'wof-superseded_by',
-							    // TO DO : please to write js-whosonfirst-placetypes...
-							    'wof-hierarchy-continent_id', 'wof-hierarchy-country_id', 'wof-hierarchy-region_id',
-							    'wof-hierarchy-county_id', 'wof-hierarchy-locality_id', 'wof-hierarchy-neighbourhood_id',
-							    'wof-hierarchy-campus_id', 'wof-hierarchy-venue_id'
-							    ];
-					
-					if ((ctx) && (d)){
-						
-						if ((possible_wof.indexOf(ctx) != -1) && (d > 0)){
-							
-							var root = mapzen.whosonfirst.spelunker.abs_root_url();
-							var link = root + "id/" + encodeURIComponent(d) + "/";
-							var el = self.render_link(link, d, ctx);
-
-							var text = el.children[0];
-							text.setAttribute("data-value", mapzen.whosonfirst.php.htmlspecialchars(d));
-							text.setAttribute("class", "props-uoc props-uoc-name props-uoc-name_" + mapzen.whosonfirst.php.htmlspecialchars(d));
-
-							return el;
-						}
-
-						else if (ctx == 'wof-id'){
-							return self.render_code(d, ctx);
-						}
-
-						else if (ctx == 'wof-placetype'){
-							var root = mapzen.whosonfirst.spelunker.abs_root_url();
-							var link = root + "placetypes/" + encodeURIComponent(d) + "/";
-							return self.render_link(link, d, ctx);
-						}
-
-						else if (ctx == 'wof-concordances-gn:id'){
-							var link = "http://geonames.org/" + encodeURIComponent(d) + "/";
-							return self.render_link(link, d, ctx);							
-						}
-
-						/*
-						else if (ctx == 'wof-concordances-mzb:id'){
-							var link = "https://s3.amazonaws.com/osm-polygons.mapzen.com/" + encodeURIComponent(d) + ".tgz";
-							return self.render_link(link, d, ctx);							
-						}
-						*/
-
-						else if ((ctx == 'wof-concordances-gp:id') || (ctx == 'wof-concordances-woe:id')){
-							var link = "https://woe.spum.org/id/" + encodeURIComponent(d) + "/";
-							return self.render_link(link, d, ctx);							
-						}
-
-						else if (ctx == 'wof-concordances-tgn:id'){
-							var link = "http://vocab.getty.edu/tgn/" + encodeURIComponent(d);
-							return self.render_link(link, d, ctx);
-						}
-
-						else if (ctx == 'wof-lastmodified'){
-							var dt = new Date(parseInt(d) * 1000);
-							return self.render_text(dt.toISOString(), ctx);
-						}
-						
-						else if ((ctx == 'wof-megacity') && (d == 1)){
-							var root = mapzen.whosonfirst.spelunker.abs_root_url();
-							var link = root + "megacities/";
-							return self.render_link(link, "HOW BIG WOW MEGA SO CITY", ctx);
-						}
-
-						else if (ctx == 'wof-tags'){
-							var root = mapzen.whosonfirst.spelunker.abs_root_url();
-							var link = root + "tags/" + encodeURIComponent(d) + "/";
-							return self.render_link(link, d, ctx);
-						}
-
-						else if ((ctx.match(/^name-/)) || (ctx == 'wof-name')){
-							var root = mapzen.whosonfirst.spelunker.abs_root_url();
-							var link = root + "search/?q=" + encodeURIComponent(d);
-							return self.render_link(link, d, ctx);
-						}
-
-						else if (ctx == 'sg-city'){
-							var root = mapzen.whosonfirst.spelunker.abs_root_url();
-							var link = root + "search/?q=" + encodeURIComponent(d) + "&placetype=locality";
-							return self.render_link(link, d, ctx);
-						}
-
-						else if (ctx == 'sg-postcode'){
-							var root = mapzen.whosonfirst.spelunker.abs_root_url();
-							var link = root + "postalcodes/" + encodeURIComponent(d) + "/";
-							return self.render_link(link, d, ctx);
-						}
-
-						else if (ctx == 'sg-tags'){
-							var root = mapzen.whosonfirst.spelunker.abs_root_url();
-							var link = root + "tags/" + encodeURIComponent(d) + "/";
-							return self.render_link(link, d, ctx);
-						}
-						
-						else if (ctx.match(/^sg-classifiers-/)){
-							var root = mapzen.whosonfirst.spelunker.abs_root_url();
-							var link = root + "categories/" + encodeURIComponent(d) + "/";
-							return self.render_link(link, d, ctx);
-						}
-
-						else {
-							return self.render_text(d, ctx);
-						}
-					  }
-
-					  else {
-						return self.render_text(d, ctx);
-					}
+					// console.log("render text for " + ctx);
+					return self.render_text(d, ctx);
 				}
-				},
+			},
 
 			'render_dict': function(d, ctx){
 
@@ -165,47 +86,15 @@ mapzen.whosonfirst.yesnofix = (function(){
 				table.setAttribute("class", "table");
 
 				for (k in d){
+
 					var row = document.createElement("tr");
-				
-					// console.log("render context is " + ctx);
-
 					var label_text = k;
-
-					if (ctx == 'wof-concordances'){
-
-						if (k == 'gn:id'){
-							label_text = 'geonames';
-						}
-
-						else if ((k == 'gp:id') || (k == 'woe:id')){
-							label_text = 'geoplanet';
-						}
-
-						else if (k == 'fct:id'){
-							label_text = 'factual';
-						}
-
-						else if (k == 'tgn:id'){
-							label_text = 'tgn (getty)';
-						}
-
-						else if (k == 'oa:id'){
-							label_text = 'our airports';
-						}
-
-						else if (k == 'sg:id'){
-							label_text = 'simplegeo';
-						}
-
-						else {}
-
-					}
 
 					var header = document.createElement("th");
 					var label = document.createTextNode(mapzen.whosonfirst.php.htmlspecialchars(label_text));
 					header.appendChild(label);
 
-					var _ctx = (ctx) ? ctx + "-" + k : k;
+					var _ctx = (ctx) ? ctx + "." + k : k;
 
 					var content = document.createElement("td");
 					var body = self.render(d[k], _ctx);
@@ -247,17 +136,20 @@ mapzen.whosonfirst.yesnofix = (function(){
 				return list;
 			},
 
-				'render_editable': function(d){
+			'render_editable': function(d){
 				// please write me
 			},
 
-				'render_text': function(d, ctx){
+			'render_text': function(d, ctx){
 
 				var text = mapzen.whosonfirst.php.htmlspecialchars(d);
 
 				var span = document.createElement("span");
 				span.setAttribute("id", ctx);
+				span.setAttribute("title", ctx);
 				span.setAttribute("class", "props-uoc");
+
+				span.onclick = mapzen.whosonfirst.yesnofix.onclick;
 
 				var el = document.createTextNode(text);
 				span.appendChild(el);
@@ -293,7 +185,7 @@ mapzen.whosonfirst.yesnofix = (function(){
 					pred = parts[1];
 
 					if (parts.length != 2){
-						ns = "misc";
+						ns = "global";
 						pred = k;
 					}
 
@@ -324,21 +216,16 @@ mapzen.whosonfirst.yesnofix = (function(){
 				return sorted;
 			},
 
-			'render_bucket': function(ns, bucket){
+			'onclick': function(e) {
 
-				var wrapper = document.createElement("div");
+				var target = e.target;
+				var id = target.getAttribute("id");
+				var value = target.textContent;
 
-				var header = document.createElement("h3");
-				var content = document.createTextNode(ns);
-				header.appendChild(content);
-			
-				var sorted = self.sort_bucket(bucket);
-				var body = self.render(sorted, ns);
-				
-				wrapper.appendChild(header);
-				wrapper.appendChild(body);
+				var enc_id = mapzen.whosonfirst.php.htmlspecialchars(id);
+				var enc_value = mapzen.whosonfirst.php.htmlspecialchars(value);
 
-				return wrapper;
+				alert("you clicked " + enc_id + " whose value is \"" + enc_value + "\"");
 			},
 
 		}
