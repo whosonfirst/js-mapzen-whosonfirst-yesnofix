@@ -59,7 +59,7 @@ Assertions will be recorded in locally in the active browser context and made av
 
 This approach was pioneered by the New York Public Library and the work they did with [their Building Inspector project](http://buildinginspector.nypl.org/about).
 
-_Actually most of what I just described is actually working but, like everything, it is only the barest of functional implementations and not pretty at all. Like this:_
+_Actually most of what I just described is working but, like everything else, it is only the barest of functional implementations and not pretty at all. Like this:_
 
 ![](yesnofix-report.png)
 
