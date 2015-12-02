@@ -61,7 +61,7 @@ This approach was pioneered by the New York Public Library and the work they did
 
 _Actually most of what I just described is actually working but, like everything, it is only the barest of functional implementations and not pretty at all. Like this:_
 
-![](yesnofix-click.png)
+![](yesnofix-report.png)
 
 So, that's the work.
 
