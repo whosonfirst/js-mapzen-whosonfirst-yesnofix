@@ -308,7 +308,7 @@ mapzen.whosonfirst.yesnofix = (function(){
 				}
 
 				var path = id;
-				var value = target.textContent;
+				var value = el.textContent;
 				var assertion = target.getAttribute("data-assertion");
 
 				self.assert(path, value, assertion);
