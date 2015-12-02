@@ -41,7 +41,9 @@ _See the way we're calling a method called `makeitso` ? Yeah, so stuff like that
 
 ### Uh okay... now what?
 
-Did we mention this library is still in active development? Okay. When you run the code above two things will happen. First your data structure will be "pretty-printed" in to a series of nested tables. Right now they're pretty ugly but the goal is to have something that you can look at without getting a headache. Like this:
+Did we mention this library is still in active development? Okay. When you run the code above two things will happen. First your data structure will be "pretty-printed" in to a series of nested tables.
+
+Right now it's pretty ugly but the goal is to have something that you can look at without getting a headache. Like this:
 
 ![](yesnofix.png)
 
