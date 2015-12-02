@@ -47,7 +47,7 @@ Right now it's pretty ugly but the goal is to have something that you can look a
 
 ![](yesnofix.png)
 
-The second thing that will happen is that each value at the _end_ of each path in your data structure will become active. As of this writing all that happens when you click a value is an alert dialog displaying the nested path and the value you clicked. Like this:
+The second thing that will happen is that each value at the _end_ of each path in your data structure will become active. As of this writing all that happens when you click a value is an alert dialog is triggered displaying the nested path and the value you clicked. Like this:
 
 ![](yesnofix-click.png)
 
