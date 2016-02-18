@@ -14,11 +14,27 @@ mapzen.whosonfirst.yesnofix = (function(){
 	'text': function(d, ctx){ return null; },
     };
 
-    var assertions = [];
-
+    var assertions = {};
     var current = null;
 
+    var submit_handler = function(report){
+	report = encodeURIComponent(report);
+	var data = "data:text/plain," + report;
+	window.open(data, '_report');
+    };
+
     var self = {
+
+	'set_submit_handler': function(handler){
+
+	    if (typeof(handler) != "function"){
+		self.notify("invalid handler", "error");
+		return false;
+	    }
+
+	    submit_handler = handler;
+	    return true;
+	},
 
 	'set_custom_renderers': function(t, r){
 
@@ -63,7 +79,10 @@ mapzen.whosonfirst.yesnofix = (function(){
 	    
 	    var pretty = document.createElement("div");
 	    pretty.setAttribute("id", "yesnofix-pretty");
-	    
+
+	    var controls = self.render_controls();
+	    pretty.appendChild(controls);
+
 	    buckets = self.bucket_props(props);
 	    
 	    var namespaces = Object.keys(buckets);
@@ -80,6 +99,73 @@ mapzen.whosonfirst.yesnofix = (function(){
 	    return pretty;				
 	},
 	
+	'render_controls': function(){
+
+	    var report = document.createElement("div");
+	    report.setAttribute("id", "yesnofix-report");
+
+	    var buttons = document.createElement("div");
+	    buttons.setAttribute("id", "yesnofix-report-buttons");
+
+	    var show = document.createElement("button");
+	    show.setAttribute("id", "yesnofix-report-show");
+	    show.appendChild(document.createTextNode("show report"));
+
+	    var hide = document.createElement("button");
+	    hide.setAttribute("id", "yesnofix-report-hide");
+	    hide.appendChild(document.createTextNode("hide report"));
+
+	    var submit = document.createElement("button");
+	    submit.setAttribute("id", "yesnofix-report-submit");
+	    submit.appendChild(document.createTextNode("submit report"));
+
+	    var br = document.createElement("br");
+	    br.setAttribute("clear", "all");
+
+	    buttons.appendChild(show);
+	    buttons.appendChild(hide);
+	    buttons.appendChild(submit);
+	    buttons.appendChild(br);
+
+	    var body = document.createElement("pre");
+	    body.setAttribute("id", "yesnofix-report-body");
+
+	    show.onclick = function(){
+
+		var sh = document.getElementById("yesnofix-report-show");
+		var hd = document.getElementById("yesnofix-report-hide");
+		var sb = document.getElementById("yesnofix-report-submit");
+		var bd = document.getElementById("yesnofix-report-body");
+
+		sh.style = "display:none;";
+		hd.style = "display:block;";
+		bd.style = "display:block;";
+		sb.style = "display:block;";
+	    };
+
+	    hide.onclick = function(){
+
+		var sh = document.getElementById("yesnofix-report-show");
+		var hd = document.getElementById("yesnofix-report-hide");
+		var sb = document.getElementById("yesnofix-report-submit");
+		var bd = document.getElementById("yesnofix-report-body");
+
+		sh.style = "display:block;";
+		hd.style = "display:none;";
+		bd.style = "display:none;";
+		sb.style = "display:none;";
+	    };
+
+	    submit.onclick = function(){
+		submit_handler(self.report());
+	    };
+
+	    report.appendChild(buttons);
+	    report.appendChild(body);
+
+	    return report;
+	},
+
 	'render_bucket': function(ns, bucket){
 	    
 	    var wrapper = document.createElement("div");
@@ -400,18 +486,55 @@ mapzen.whosonfirst.yesnofix = (function(){
 		return false;
 	    }
 	    
-	    var cls = el.getAttribute("class");
-	    el.setAttribute("class", cls + " yesnofix-asserted");
-
 	    var path = id;
 	    var value = el.textContent;
 	    var assertion = target.getAttribute("data-assertion");
-	    
+
+	    var str_assertion = "";
+
+	    for (k in status_map){
+
+		if (assertion == status_map[k]){
+		    str_assertion = k;
+		    break;
+		}
+	    }
+
 	    self.assert(path, value, assertion);
 	    
-	    self.notify(path + "=" + assertion);
+	    self.notify(path + "=" + str_assertion);
 
 	    self.collapse(id);
+
+	    var body = document.getElementById("yesnofix-report-body");
+	    body.innerHTML = self.report();
+
+	    if (body.style.display != "block"){
+		var show = document.getElementById("yesnofix-report-show");
+		show.style.display = "block";
+	    }
+
+	    var cls = el.getAttribute("class");
+	    cls = cls.split(" ");
+	    var count = cls.length;
+
+	    var new_cls = [];
+
+	    for (var i=0; i < count; i++){
+		if (cls[i].match(/^yesnofix-asserted/)){
+		    continue;
+		}
+
+		new_cls.push(cls[i]);
+	    }
+
+	    new_cls.push("yesnofix-asserted");
+	    new_cls.push("yesnofix-asserted-" + str_assertion);
+	    new_cls = new_cls.join(" ");
+
+	    console.log(new_cls);
+	    el.setAttribute("class", new_cls);
+
 	},
 	
 	'oncancel': function(e){
@@ -443,17 +566,17 @@ mapzen.whosonfirst.yesnofix = (function(){
 	
 	'assert': function(path, value, assertion){
 	    var dt = new Date();
-	    assertions.push({'path': path, 'value': value, 'assertion': assertion, 'date': dt});
+	    assertions[path] = {'path': path, 'value': value, 'assertion': assertion, 'date': dt};
 	},
 	
 	'report': function(){
 	    
-	    var report = [];
+	    var report = [ "path,value,assertion,date" ];
 	    var count = assertions.length;
 	    
-	    for (var i=0; i < count; i++){
+	    for (path in assertions){
 		
-		var a = assertions[i];
+		var a = assertions[path];
 		
 		var row = [ a['path'], a['value'], a['assertion'], a['date'].toISOString() ];
 		row = row.join(",");
