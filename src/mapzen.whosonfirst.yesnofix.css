@@ -63,6 +63,15 @@
     display:inline;
 }
 
+.yesnofix-locked {
+    display:none;
+    padding-right: 1em;
+}
+
+.yesnofix-content:hover .yesnofix-locked {
+    display:inline;
+}
+
 #yesnofix-pretty td :last-child {
     border-bottom:none;
 }
@@ -81,7 +90,7 @@
     margin-left:.25em;
     margin-right:.25em;
     font-size:small;
-    width:20%;
+    width:15%;
     color:#333;
 }
 
@@ -104,6 +113,20 @@
 .yesnofix-assert-cancel:hover {
     background-color:#666;
     color:#fff;
+}
+
+.yesnofix-assert-about {
+    padding: 0px !important;
+    font-size:small !important;
+    border: none !important;
+    background-color:#fff !important;
+    width: auto !important;
+    margin-left:1em !important;
+    color: #ccc !important;
+}
+
+.yesnofix-assert-about:hover {
+    color: #ffae19 !important;
 }
 
 #yesnofix-report {
@@ -152,4 +175,34 @@
     max-height: 100px;
     overflow: scroll;
     background-color:#A4DDED;
+}
+
+#yesnofix-about {
+    z-index: 2000 !important;	// because the leaflet attribution widget is z-index 1000....
+    border:8px solid #333;
+    background-color: #fff;
+    width: 50%;
+    min-height:50%;
+    max-height:50%;    
+    padding: 1.5em;
+    position: fixed;
+    top: 25%;
+    left:25%;
+}
+
+#yesnofix-about-text {
+    y-overflow: scroll;
+}
+
+#yesnofix-about-close {
+    margin-top:2em;
+    text-align: right;
+    position:absolute;
+    bottom: 2em;
+    right: 2em;
+}
+
+#yesnofix-about-close-button {
+    border: solid thin;
+    padding: .5em;
 }

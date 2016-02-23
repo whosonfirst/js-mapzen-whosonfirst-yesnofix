@@ -14,6 +14,12 @@ mapzen.whosonfirst.yesnofix = (function(){
 	'text': function(d, ctx){ return null; },
     };
 
+    var _exclusions = {
+	'text': function(d, ctx){ return null; },
+    };
+
+    var _enabled = true;
+
     var assertions = {};
     var current = null;
 
@@ -25,6 +31,19 @@ mapzen.whosonfirst.yesnofix = (function(){
 
     var self = {
 
+	'enabled': function(bool){
+
+	    if (typeof(bool) != "undefined"){
+		if (bool){
+		    _enabled = true;
+		} else {
+		    _enabled = false;
+		}
+	    }
+
+	    return _enabled;
+	},
+	
 	'set_submit_handler': function(handler){
 
 	    if (typeof(handler) != "function"){
@@ -57,6 +76,29 @@ mapzen.whosonfirst.yesnofix = (function(){
 
 	    var custom = _custom_renderers[t];
 	    return custom(d, ctx);
+	},
+
+	'set_custom_exclusions': function(t, e){
+
+	    if (! _exclusions[t]){
+		return;
+	    }
+
+	    if ((! e) || (typeof(e) != "function")){
+		return;
+	    }
+
+	    _exclusions[t] = e;
+	},
+
+	'get_custom_exclusion': function(t, d, ctx){
+
+	    if (! _exclusions[t]){
+		return null;
+	    }
+
+	    var exclude =  _exclusions[t];
+	    return exclude(d, ctx);
 	},
 	
 	// please do not call these 'engage' or 'makeitso' ...
@@ -201,9 +243,29 @@ mapzen.whosonfirst.yesnofix = (function(){
 		var wrapper = document.createElement("span");
 		wrapper.setAttribute("class", "yesnofix-content");
 
-		var trigger = self.render_trigger(ctx);
-		wrapper.appendChild(trigger);
+		var add_trigger = true;
 
+		if (! _enabled){
+		    add_trigger = false;
+		}
+
+		if (add_trigger){
+
+		    var exclusion = self.get_custom_exclusion('text', d, ctx);
+
+		    if ((exclusion) && (exclusion(d, ctx))){
+
+			var lock = self.render_locked(ctx);
+			wrapper.appendChild(lock);   
+		    }
+
+		    else {
+
+			var trigger = self.render_trigger(ctx);
+			wrapper.appendChild(trigger);
+		    }
+		}
+		
 		var content;
 
 		var renderer = self.get_custom_renderer('text', d, ctx);
@@ -326,7 +388,7 @@ mapzen.whosonfirst.yesnofix = (function(){
 	},
 
 	/*
-	  .yesnofix-trigger { display:none; padding-left: 1em; }
+	  .yesnofix-trigger { display:none; padding-right: 1em; }
 	  .yesnofix-content:hover .yesnofix-trigger { display:inline; }
 	*/
 
@@ -337,10 +399,30 @@ mapzen.whosonfirst.yesnofix = (function(){
 	    var trigger = document.createElement("span");
 	    trigger.setAttribute("trigger-id", ctx);
 	    trigger.setAttribute("class", "yesnofix-trigger");
+	    trigger.setAttribute("title", "assert an opinion about this attribute");
+
 	    trigger.appendChild(edit);
 	    
 	    trigger.onclick = mapzen.whosonfirst.yesnofix.ontrigger;
 	    return trigger;
+	},
+
+	/*
+	  .yesnofix-locked { display:none; padding-right: 1em; }
+	  .yesnofix-content:hover .yesnofix-locked { display:inline; }
+	*/
+
+	'render_locked': function(ctx){
+	    
+	    var icon = document.createTextNode("🔒");	// http://emojipedia.org/memo/
+
+	    var locked = document.createElement("span");
+	    locked.setAttribute("class", "yesnofix-locked");
+	    locked.setAttribute("title", "this attribute is locked");
+
+	    locked.appendChild(icon);
+	    
+	    return locked;
 	},
 
 	'render_code': function(text, ctx){
@@ -438,39 +520,112 @@ mapzen.whosonfirst.yesnofix = (function(){
 	    yes.setAttribute("class", "yesnofix-assert-yes");
 	    yes.setAttribute("data-id", id);
 	    yes.setAttribute("data-assertion", status_map['yes']);
-	    
+	    yes.setAttribute("title", "yes, this value is correct");
+
 	    var no = document.createElement("button");
 	    no.setAttribute("class", "yesnofix-assert-no");
 	    no.setAttribute("data-id", id);
 	    no.setAttribute("data-assertion", status_map['no']);
+	    no.setAttribute("title", "no, this value is incorrect");
 	    
 	    var fix = document.createElement("button");
 	    fix.setAttribute("class", "yesnofix-assert-fix");
 	    fix.setAttribute("data-id", id);
 	    fix.setAttribute("data-assertion", status_map['fix']);
+	    fix.setAttribute("title", "this value is somewhere between weird-data and kind-of-correct, but still needs some help");
 	    
 	    var cancel = document.createElement("button");
 	    cancel.setAttribute("class", "yesnofix-assert-cancel");
 	    cancel.setAttribute("data-id", id);
+	    cancel.setAttribute("title", "actually, never mind");
+
+	    var about = document.createElement("button");
+	    about.setAttribute("class", "yesnofix-assert-about");
+	    about.setAttribute("title", "wait... what's going? what is this?");
 
 	    yes.appendChild(document.createTextNode("yes"));
 	    no.appendChild(document.createTextNode("no"));
 	    fix.appendChild(document.createTextNode("fix"));
 	    cancel.appendChild(document.createTextNode("cancel"));
+	    about.appendChild(document.createTextNode("?"));
 	    
 	    yes.onclick = mapzen.whosonfirst.yesnofix.onassert;
 	    no.onclick = mapzen.whosonfirst.yesnofix.onassert;
 	    fix.onclick = mapzen.whosonfirst.yesnofix.onassert;
 	    cancel.onclick = mapzen.whosonfirst.yesnofix.oncancel;
+	    about.onclick = mapzen.whosonfirst.yesnofix.onabout;
 
 	    input.appendChild(yes);
 	    input.appendChild(no);
 	    input.appendChild(fix);
 	    input.appendChild(cancel);
+	    input.appendChild(about);
+
 	    input.appendChild(document.createElement("br"));
 	    return input;
 	},
 	
+	'onabout': function(){
+
+	    var about = document.createElement("div");
+	    about.setAttribute("id", "yesnofix-about");
+
+	    var text = document.createElement("div");
+	    text.setAttribute("id", "yesnofix-about-text");
+
+	    var head = document.createElement("h2");
+	    head.appendChild(document.createTextNode("What is Yes No Fix ?"));
+
+	    var intro = document.createElement("p");
+	    intro.appendChild(document.createTextNode("intro..."));
+
+	    var options = document.createElement("ul");
+
+	    var yes = document.createElement("li");
+	    yes.appendChild(document.createTextNode("yes – this data is correct"));
+
+	    var no = document.createElement("li");
+	    no.appendChild(document.createTextNode("no – this data is incorrect and should be removed"));
+
+	    var fix = document.createElement("li");
+	    fix.appendChild(document.createTextNode("fix – this data is not entirely wrong but needs to be corrected"));
+
+	    options.appendChild(yes);
+	    options.appendChild(no);
+	    options.appendChild(fix);
+
+	    var outro = document.createElement("p");
+	    outro.appendChild(document.createTextNode("outro..."));
+
+	    text.appendChild(head);
+	    text.appendChild(intro);
+	    text.appendChild(options);
+	    text.appendChild(outro);
+
+	    var close = document.createElement("div");
+	    close.setAttribute("id", "yesnofix-about-close");
+
+	    var button = document.createElement("button");
+	    button.setAttribute("id", "yesnofix-about-close-button");
+	    button.appendChild(document.createTextNode("okay!"));
+
+	    close.appendChild(button);
+
+	    about.appendChild(text);
+	    about.appendChild(close);
+
+	    button.onclick = function(){
+		var about = document.getElementById("yesnofix-about");
+		var parent = about.parentElement;
+		parent.removeChild(about);
+	    };
+
+	    var body = document.body;
+	    body.insertBefore(about, body.firstChild);
+
+	    return false;
+	},
+
 	'onassert' : function(e){
 	    
 	    var target = e.target;
