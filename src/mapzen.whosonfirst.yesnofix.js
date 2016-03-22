@@ -745,6 +745,11 @@ mapzen.whosonfirst.yesnofix = (function(){
 
 	'notify': function(msg, ctx){
 
+	    // it turns out this stuff is super annoying...
+	    // (20160321/thisisaaronland)
+
+	    return;
+
 	    // https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API/Using_the_Notifications_API#Browser_compatibility
 
 	    var enc_msg = mapzen.whosonfirst.php.htmlspecialchars(msg);
