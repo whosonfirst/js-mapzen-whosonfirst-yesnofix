@@ -107,13 +107,13 @@ mapzen.whosonfirst.yesnofix = (function(){
 	    
 	    var el = document.getElementById(target);
 	    
-	    if (! el){
+		if (! el){
 		return false;
 	    }
 	    
 	    var pretty = self.engage(data);
 	    el.appendChild(pretty);
-	    
+
 	    return true;
 	},
 	
@@ -129,7 +129,7 @@ mapzen.whosonfirst.yesnofix = (function(){
 	    
 	    var namespaces = Object.keys(buckets);
 	    namespaces = namespaces.sort();
-	    
+
 	    var count_ns = namespaces.length;
 	    
 	    for (var i=0; i < count_ns; i++){
@@ -137,7 +137,7 @@ mapzen.whosonfirst.yesnofix = (function(){
 		var dom = self.render_bucket(ns, buckets[ns]);
 		pretty.appendChild(dom);
 	    }
-	    
+
 	    return pretty;				
 	},
 	
@@ -211,15 +211,19 @@ mapzen.whosonfirst.yesnofix = (function(){
 	'render_bucket': function(ns, bucket){
 	    
 	    var wrapper = document.createElement("div");
-	    
-	    var header = document.createElement("h3");
-	    var content = document.createTextNode(ns);
-	    header.appendChild(content);
-	    
+
+		if (ns != '_global_'){
+
+			var header = document.createElement("h3");
+			var content = document.createTextNode(ns);
+			header.appendChild(content);
+
+			wrapper.appendChild(header);			
+		}
+
 	    var sorted = self.sort_bucket(bucket);
 	    var body = self.render(sorted, ns);
 	    
-	    wrapper.appendChild(header);
 	    wrapper.appendChild(body);
 	    
 	    return wrapper;
@@ -318,7 +322,7 @@ mapzen.whosonfirst.yesnofix = (function(){
 		 */
 
 		var header = document.createElement("th");
-		var label = document.createTextNode(mapzen.whosonfirst.php.htmlspecialchars(label_text));
+		var label = document.createTextNode(self.htmlspecialchars(label_text));
 		header.appendChild(label);
 		
 		var content = document.createElement("td");
@@ -363,7 +367,7 @@ mapzen.whosonfirst.yesnofix = (function(){
 	
 	'render_text': function(d, ctx){
 	    
-	    var text = mapzen.whosonfirst.php.htmlspecialchars(d);
+	    var text = self.htmlspecialchars(d);
 	    
 	    var span = document.createElement("span");
 	    span.setAttribute("id", ctx);
@@ -449,7 +453,7 @@ mapzen.whosonfirst.yesnofix = (function(){
 		pred = parts[1];
 		
 		if (parts.length != 2){
-		    ns = "global";
+		    ns = "_global_";
 		    pred = k;
 		}
 		
@@ -494,8 +498,8 @@ mapzen.whosonfirst.yesnofix = (function(){
 		self.collapse(self.current);
 	    }
 
-	    var enc_id = mapzen.whosonfirst.php.htmlspecialchars(id);
-	    var enc_value = mapzen.whosonfirst.php.htmlspecialchars(value);
+	    var enc_id = self.htmlspecialchars(id);
+	    var enc_value = self.htmlspecialchars(value);
 	    
 	    var parent = target.parentElement;
 	    
@@ -752,7 +756,7 @@ mapzen.whosonfirst.yesnofix = (function(){
 
 	    // https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API/Using_the_Notifications_API#Browser_compatibility
 
-	    var enc_msg = mapzen.whosonfirst.php.htmlspecialchars(msg);
+	    var enc_msg = self.htmlspecialchars(msg);
 
 	    if (! window.Notification){
 		alert(enc_msg);
