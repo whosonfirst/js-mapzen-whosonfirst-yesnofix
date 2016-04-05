@@ -30,7 +30,7 @@
 
       var target = "yesnofix";
 
-      if (! mapzen.whosonfirst.yesnofix.makeitso(data, target)){
+      if (! mapzen.whosonfirst.yesnofix.apply(data, target)){
       	alert("failed to render data");
       }
 
@@ -44,7 +44,7 @@
            return false;
         }
 
-      	b.innerHTML = mapzen.whosonfirst.php.htmlspecialchars(r);
+      	b.innerHTML = mapzen.whosonfirst.yesnofix.htmlspecialchars(r);
       };
 
       var b = document.getElementById("generate-report");
