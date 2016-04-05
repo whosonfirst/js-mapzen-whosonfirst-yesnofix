@@ -178,7 +178,7 @@
 }
 
 #yesnofix-about {
-    z-index: 2000 !important;	// because the leaflet attribution widget is z-index 1000....
+    z-index: 2000 !important;	/* because the leaflet attribution widget is z-index 1000.... */
     border:8px solid #333;
     background-color: #fff;
     width: 50%;
