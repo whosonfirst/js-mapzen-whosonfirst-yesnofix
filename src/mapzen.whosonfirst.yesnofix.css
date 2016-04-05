@@ -188,21 +188,31 @@
     position: fixed;
     top: 25%;
     left:25%;
+
 }
 
 #yesnofix-about-text {
-    y-overflow: scroll;
+
+    position: relative;
+    height: 300px;
+    overflow: scroll !important;
+    padding-right:6em;
 }
 
 #yesnofix-about-close {
     margin-top:2em;
     text-align: right;
     position:absolute;
-    bottom: 2em;
-    right: 2em;
+    top: .25em;
+    right: 2.5em;
+    border: solid thin;
 }
 
 #yesnofix-about-close-button {
     border: solid thin;
     padding: .5em;
+}
+
+#yesnofix-about-close-button:hover {
+    background-color: #999;
 }
