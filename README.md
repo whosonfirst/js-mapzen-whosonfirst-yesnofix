@@ -1,5 +1,7 @@
 # js-whosonfirst-yesnofix
 
+![](images/yesnofix-sf-edit.png)
+
 A little bit of Javascript love to make arbitrary data structures [Yes No Fix](https://mapzen.com/blog/yesnofix/) -able.
 
 ## tl;dr
