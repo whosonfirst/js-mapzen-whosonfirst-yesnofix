@@ -39,4 +39,5 @@ For now, the best place to get all the details about Yes No Fix (and how to use 
 
 ## See also
 
+* https://mapzen.com/blog/yesnofix/
 * http://buildinginspector.nypl.org/
