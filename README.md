@@ -35,7 +35,7 @@ That's it. By default every element in your data structure will be made Yes No F
 
 ### The long version
 
-For now, the best place to get all the details about Yes No Fix (and how to use it) is [our blog post](https://mapzen.com/blog/yesnofix/) on the subject.
+For now, the best place to get all the details about Yes No Fix (and how to use it) is [our blog post](https://mapzen.com/blog/yesnofix/) announcing the project.
 
 ## See also
 
